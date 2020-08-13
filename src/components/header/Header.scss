@@ -1,0 +1,23 @@
+header {
+  background: #fff;
+  border-bottom: 1px solid lightgray;
+  padding: 0.5rem;
+  display: flex;
+  align-items: center;
+  h1 {
+    margin: 0;
+  }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    &__logo {
+      display: flex;
+      align-items: center;
+    }
+    &__controls{
+        display: flex;
+        align-items: center;
+    }
+  }
+}
