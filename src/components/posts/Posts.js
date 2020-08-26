@@ -1,15 +1,29 @@
-import React from 'react'
-import './Posts.scss'
-import Post from '../post/Post'
+import React, { useState, useEffect } from "react";
+import "./Posts.scss";
+import Post from "../post/Post";
+import { db } from "../../firebase";
 
 const Posts = () => {
-    return (
-        <div className="posts">
-            <Post />
-            <Post />
-            <Post />
-        </div>
-    )
-}
+  const [posts, setPosts] = useState([]);
 
-export default Posts
+  useEffect(() => {
+    db.collection("posts").onSnapshot((snapshot) => {
+      setPosts(
+        snapshot.docs.map((doc) => ({
+          id: doc.id,
+          post: doc.data()
+        }))
+      );
+    });
+  }, []);
+
+  return (
+    <div className="posts">
+      {posts.map(({ id, post }) => (
+        <Post key={id} post={post} />
+      ))}
+    </div>
+  );
+};
+
+export default Posts;

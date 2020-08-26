@@ -15,9 +15,13 @@ header {
       display: flex;
       align-items: center;
     }
-    &__controls{
-        display: flex;
-        align-items: center;
+    &__controls {
+      display: flex;
+      align-items: center;
     }
   }
+}
+.auth {
+  display: flex;
+  flex-direction: column;
 }
