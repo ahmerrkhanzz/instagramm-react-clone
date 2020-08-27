@@ -6,6 +6,7 @@ import ExploreOutlinedIcon from "@material-ui/icons/ExploreOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import { auth } from "../../firebase";
+import ImageUploader from "../image-uploader/ImageUploader";
 import "./Header.scss";
 
 function getModalStyle() {
@@ -92,6 +93,7 @@ const Header = () => {
 
   return (
     <header>
+      {user ? (<ImageUploader username={user?.displayName}/>) : (<h3>Please login to post</h3>)}
       <Modal
         open={open}
         onClose={() => setOpen(false)}
