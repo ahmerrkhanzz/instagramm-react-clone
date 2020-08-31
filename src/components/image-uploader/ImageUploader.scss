@@ -1,0 +1,12 @@
+.uploader {
+  display: flex;
+  flex-direction: column;
+  padding: 0.5rem;
+  font-family: "Open Sans", sans-serif;
+  flex-direction: column;
+  justify-content: center;
+  input[type="file"]{
+      width: 100%;
+      margin: 1rem 0;
+  }
+}

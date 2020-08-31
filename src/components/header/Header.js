@@ -7,6 +7,7 @@ import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import { auth } from "../../firebase";
 import ImageUploader from "../image-uploader/ImageUploader";
+import PublishIcon from "@material-ui/icons/Publish";
 import "./Header.scss";
 
 function getModalStyle() {
@@ -25,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     width: 400,
     backgroundColor: theme.palette.background.paper,
-    border: "2px solid #000",
+    border: "none",
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
@@ -35,6 +36,7 @@ const Header = () => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
+  const [uploadOpen, setUploadOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -73,7 +75,7 @@ const Header = () => {
         })
         .catch((err) => {
           console.log(err);
-          alert(err.message)
+          alert(err.message);
         });
     } else {
       auth
@@ -85,7 +87,7 @@ const Header = () => {
         })
         .catch((err) => {
           console.log(err);
-          alert(err.message)
+          alert(err.message);
         });
     }
     setOpen(false);
@@ -93,7 +95,6 @@ const Header = () => {
 
   return (
     <header>
-      {user ? (<ImageUploader username={user?.displayName}/>) : (<h3>Please login to post</h3>)}
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -134,23 +135,41 @@ const Header = () => {
         </div>
       </Modal>
 
+      <Modal
+        open={uploadOpen}
+        onClose={() => setUploadOpen(false)}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <div style={modalStyle} className={classes.paper}>
+          <ImageUploader username={user?.displayName} />
+        </div>
+      </Modal>
+
       <Container maxWidth="md">
         <div className="header">
           <div className="header__logo">
             <img src={require("../../assets/images/logo.png")} alt="logo" />
           </div>
-          <div className="header__search">
+          {/* <div className="header__search">
             <TextField
               label="Search field"
               type="search"
               size="small"
               variant="outlined"
             />
-          </div>
+          </div> */}
           <div className="header__controls">
-            <HomeOutlinedIcon />
+            {user ? (
+              <Button onClick={() => setUploadOpen(true)}>
+                <PublishIcon />
+              </Button>
+            ) : (
+              ""
+            )}
+            {/* <HomeOutlinedIcon />
             <ExploreOutlinedIcon />
-            <FavoriteBorderOutlinedIcon />
+            <FavoriteBorderOutlinedIcon /> */}
             {/* <Avatar
               onClick={handleOpen}
               alt="Ahmer Khan"

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import { TextField } from "@material-ui/core";
 import clsx from "clsx";
 import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
@@ -41,9 +42,21 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Post = (props) => {
-  console.log(props);
-  const { caption, imageUrl, username } = props.post;
+const Post = ({ postId, post }) => {
+  console.log(postId);
+  console.log(post)
+  const { caption, imageUrl, username } = post;
+  const [comment, setComment] = useState("");
+
+  // useEffect(() => {
+  //   if(props.post) {
+  //     const unsubscribe
+  //   }
+  //   return () => {
+  //     cleanup
+  //   }
+  // }, [props.post])
+
   const classes = useStyles();
 
   return (
@@ -64,15 +77,23 @@ const Post = (props) => {
           subheader="Islamabad, Pakistan"
         />
         <CardMedia
-        alt="Contemplative Reptile"
+          alt="Contemplative Reptile"
           className={classes.media}
           image={imageUrl}
           title="Paella dish"
         />
         <CardContent>
           <Typography variant="body2" color="textSecondary" component="p">
-            <strong>{username}</strong>: {caption}
+            <strong>{username}</strong> {caption}
           </Typography>
+
+          <input
+            type="text"
+            value={comment}
+            placeholder="Add a comment"
+            onChange={(event) => setComment(event.target.value)}
+          />
+          <button type="button">Post</button>
         </CardContent>
       </Card>
     </div>

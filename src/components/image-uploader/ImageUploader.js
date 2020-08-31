@@ -1,9 +1,11 @@
 import React, { useState } from "react";
 import { storage, db } from "../../firebase";
-import firebase from 'firebase'
+import firebase from "firebase";
+import { TextField, Button, LinearProgress } from "@material-ui/core";
+import './ImageUploader.scss'
 
-const ImageUploader = ({username}) => {
-  console.log(username)
+const ImageUploader = ({ username }) => {
+  console.log(username);
   const [caption, setCaption] = useState("");
   const [progress, setProgress] = useState(0);
   const [image, setImage] = useState(null);
@@ -39,30 +41,41 @@ const ImageUploader = ({username}) => {
           .child(image.name)
           .getDownloadURL()
           .then((url) => {
-              db.collection('posts').add({
-                  timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                  imageUrl: url,
-                  caption: caption,
-                  username: username
-              })
-              setProgress(0)
-              setCaption('')
+            db.collection("posts").add({
+              timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+              imageUrl: url,
+              caption: caption,
+              username: username,
+            });
+            setProgress(0);
+            setCaption("");
           });
       }
     );
   };
 
   return (
-    <div>
-      <input
+    <div className="uploader">
+      {/* <input
         type="text"
         placeholder="Enter caption"
         value={caption}
         onChange={(event) => setCaption(event.target.value)}
-      />
-      <progress value={progress} max='100' />
+      /> */}
+      <LinearProgress variant="determinate" value={progress} />
       <input type="file" onChange={handleChange} />
-      <button onClick={handleUpload}>Upload</button>
+      <TextField
+        placeholder="Enter caption"
+        value={caption}
+        onChange={(event) => setCaption(event.target.value)}
+      />
+      <Button
+        onClick={handleUpload}
+        color="primary"
+        disabled={!caption || !image}
+      >
+        Upload
+      </Button>
     </div>
   );
 };
