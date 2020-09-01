@@ -3,7 +3,8 @@ import "./Posts.scss";
 import Post from "../post/Post";
 import { db } from "../../firebase";
 
-const Posts = () => {
+const Posts = (props) => {
+  console.log(props);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
@@ -22,7 +23,7 @@ const Posts = () => {
   return (
     <div className="posts">
       {posts.map(({ id, post }) => (
-        <Post key={id} postId={id} post={post} />
+        <Post key={id} postId={id} post={post} loggedInUser={props.user?.displayName}/>
       ))}
     </div>
   );

@@ -58,7 +58,7 @@ const Header = () => {
     return () => {
       unsubscribe();
     };
-  }, [user, username]);
+  }, [user]);
 
   const handleOpen = () => {
     setOpen(true);

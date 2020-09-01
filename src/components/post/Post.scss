@@ -1,3 +1,49 @@
-.post{
-    margin-bottom: 3rem;
+.post {
+  margin-bottom: 3rem;
+  &__comment {
+    font-size: 0.8rem !important;
+    color: #262626 !important;
+    strong {
+      margin-right: 0.1rem;
+      font-weight: 600;
+    }
+  }
+  &__caption {
+    @extend .post__comment;
+  }
+  &__newComment {
+    display: flex;
+    margin-top: 0.7rem;
+    border-top: 1px solid #ddd;
+    padding-top: 0.5rem;
+    input {
+      display: flex;
+      flex: 1;
+      font-family: "Open Sans", sans-serif;
+      border: none;
+      &:focus {
+        border: none;
+        outline: none;
+      }
+    }
+    button {
+      flex: 0;
+      font-family: "Open Sans", sans-serif;
+      display: flex;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #0095f6;
+      font-weight: 600;
+      &:focus {
+        border: none;
+        outline: none;
+      }
+      &:disabled{
+          cursor: unset;
+          opacity: 0.4;
+          pointer-events: none;
+      }
+    }
+  }
 }

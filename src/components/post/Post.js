@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import { TextField } from "@material-ui/core";
 import clsx from "clsx";
@@ -6,16 +6,13 @@ import Card from "@material-ui/core/Card";
 import CardHeader from "@material-ui/core/CardHeader";
 import CardMedia from "@material-ui/core/CardMedia";
 import CardContent from "@material-ui/core/CardContent";
-import CardActions from "@material-ui/core/CardActions";
-import Collapse from "@material-ui/core/Collapse";
 import Avatar from "@material-ui/core/Avatar";
 import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
-import FavoriteIcon from "@material-ui/icons/Favorite";
-import ShareIcon from "@material-ui/icons/Share";
-import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+
+import { db } from "../../firebase";
 import "./Post.scss";
 
 const useStyles = makeStyles((theme) => ({
@@ -27,35 +24,47 @@ const useStyles = makeStyles((theme) => ({
     paddingTop: "56.25%", // 16:9
     width: "100%",
   },
-  expand: {
-    transform: "rotate(0deg)",
-    marginLeft: "auto",
-    transition: theme.transitions.create("transform", {
-      duration: theme.transitions.duration.shortest,
-    }),
-  },
-  expandOpen: {
-    transform: "rotate(180deg)",
-  },
   avatar: {
     backgroundColor: red[500],
   },
 }));
 
-const Post = ({ postId, post }) => {
-  console.log(postId);
-  console.log(post)
+const Post = ({ postId, post, loggedInUser }) => {
+  console.log(loggedInUser);
+  console.log(post);
   const { caption, imageUrl, username } = post;
+  const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
 
-  // useEffect(() => {
-  //   if(props.post) {
-  //     const unsubscribe
-  //   }
-  //   return () => {
-  //     cleanup
-  //   }
-  // }, [props.post])
+  useEffect(() => {
+    if (post) {
+      const unsubscribe = db
+        .collection("posts")
+        .doc(postId)
+        .collection("comments")
+        .onSnapshot((snapshot) => {
+          console.log(snapshot);
+          setComments(
+            snapshot.docs.map((doc) => ({
+              commentId: doc.id,
+              comment: doc.data(),
+            }))
+          );
+        });
+      return () => {
+        unsubscribe();
+      };
+    }
+  }, [post, postId]);
+
+  const submitCommentHandler = (event) => {
+    console.log(comment);
+    db.collection("posts").doc(postId).collection("comments").add({
+      text: comment,
+      username: loggedInUser,
+    });
+    setComment("");
+  };
 
   const classes = useStyles();
 
@@ -83,17 +92,44 @@ const Post = ({ postId, post }) => {
           title="Paella dish"
         />
         <CardContent>
-          <Typography variant="body2" color="textSecondary" component="p">
+          <Typography
+            className={clsx("post__caption")}
+            variant="body2"
+            color="textSecondary"
+            component="p"
+          >
             <strong>{username}</strong> {caption}
           </Typography>
 
-          <input
-            type="text"
-            value={comment}
-            placeholder="Add a comment"
-            onChange={(event) => setComment(event.target.value)}
-          />
-          <button type="button">Post</button>
+          {comments.length
+            ? comments.map(({ commentId, comment: { username, text } }) => (
+                <Typography
+                  key={commentId}
+                  variant="body2"
+                  color="textSecondary"
+                  component="p"
+                  className={clsx("post__comment")}
+                >
+                  <strong>{username}</strong> {text}
+                </Typography>
+              ))
+            : null}
+
+          <div className="post__newComment">
+            <input
+              type="text"
+              value={comment}
+              placeholder="Add a comment..."
+              onChange={(event) => setComment(event.target.value)}
+            />
+            <button
+              type="button"
+              onClick={submitCommentHandler}
+              disabled={!comment}
+            >
+              Post
+            </button>
+          </div>
         </CardContent>
       </Card>
     </div>
