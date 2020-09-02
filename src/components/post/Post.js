@@ -71,9 +71,6 @@ const Post = ({ postId, post, loggedInUser }) => {
   };
 
   const classes = useStyles();
-  if (!loggedInUser) {
-    return;
-  }
   return (
     <div className="post">
       <Card className={classes.root}>
@@ -121,21 +118,23 @@ const Post = ({ postId, post, loggedInUser }) => {
               ))
             : null}
 
-          <div className="post__newComment">
-            <input
-              type="text"
-              value={comment}
-              placeholder="Add a comment..."
-              onChange={(event) => setComment(event.target.value)}
-            />
-            <button
-              type="button"
-              onClick={submitCommentHandler}
-              disabled={!comment}
-            >
-              Post
-            </button>
-          </div>
+          {loggedInUser ? (
+            <div className="post__newComment">
+              <input
+                type="text"
+                value={comment}
+                placeholder="Add a comment..."
+                onChange={(event) => setComment(event.target.value)}
+              />
+              <button
+                type="button"
+                onClick={submitCommentHandler}
+                disabled={!comment}
+              >
+                Post
+              </button>
+            </div>
+          ) : null}
         </CardContent>
       </Card>
     </div>
