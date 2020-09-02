@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Header from "./components/header/Header";
+import 'bootstrap/dist/css/bootstrap.css';
 import "./App.scss";
 import {
   createMuiTheme,

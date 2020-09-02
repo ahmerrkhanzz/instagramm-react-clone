@@ -18,6 +18,17 @@ header {
     &__controls {
       display: flex;
       align-items: center;
+      .dropdown .dropdown-toggle {
+        background: none;
+        color: #262626;
+        font-size: 0.9rem;
+        border: none;
+        &:focus, &:hover, &:active {
+          box-shadow: unset;
+          background: none;
+          border: none;
+        }
+      }
     }
   }
 }
@@ -25,4 +36,3 @@ header {
   display: flex;
   flex-direction: column;
 }
-  

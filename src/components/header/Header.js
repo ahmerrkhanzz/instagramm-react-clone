@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Container, TextField, Avatar, Input, Button } from "@material-ui/core";
-import FavoriteBorderOutlinedIcon from "@material-ui/icons/FavoriteBorderOutlined";
-import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
-import ExploreOutlinedIcon from "@material-ui/icons/ExploreOutlined";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
 import { auth } from "../../firebase";
 import ImageUploader from "../image-uploader/ImageUploader";
 import PublishIcon from "@material-ui/icons/Publish";
+import { Dropdown, Form, Col, Row } from "react-bootstrap";
 import "./Header.scss";
 
 function getModalStyle() {
@@ -37,6 +35,7 @@ const Header = () => {
   const [modalStyle] = useState(getModalStyle);
   const [open, setOpen] = useState(false);
   const [uploadOpen, setUploadOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
@@ -64,9 +63,13 @@ const Header = () => {
     setOpen(true);
   };
 
+  const handleProfile = () => {
+    console.log("here");
+    setProfileOpen(true);
+  };
+
   const submit = (event) => {
     event.preventDefault();
-    console.log(user);
     if (signIn) {
       auth
         .signInWithEmailAndPassword(email, password)
@@ -95,6 +98,7 @@ const Header = () => {
 
   return (
     <header>
+      {/* AUTHENTICATION MODAL */}
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -134,7 +138,9 @@ const Header = () => {
           </form>
         </div>
       </Modal>
+      {/* AUTHENTICATION MODAL */}
 
+      {/* IMAGE UPLOADER MODAL */}
       <Modal
         open={uploadOpen}
         onClose={() => setUploadOpen(false)}
@@ -145,20 +151,46 @@ const Header = () => {
           <ImageUploader username={user?.displayName} />
         </div>
       </Modal>
+      {/* IMAGE UPLOADER MODAL */}
+
+      {/* USER PROFILE MODAL */}
+      <Modal
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+      >
+        <div style={modalStyle} className={classes.paper}>
+          <form className={classes.root} noValidate autoComplete="off">
+            <Input
+              defaultValue="Hello world"
+              inputProps={{ "aria-label": "description" }}
+            />
+            <Input
+              placeholder="Placeholder"
+              inputProps={{ "aria-label": "description" }}
+            />
+            <Input
+              defaultValue="Disabled"
+              disabled
+              inputProps={{ "aria-label": "description" }}
+            />
+            <Input
+              defaultValue="Error"
+              error
+              inputProps={{ "aria-label": "description" }}
+            />
+          </form>
+          
+        </div>
+      </Modal>
+      {/* USER PROFILE MODAL */}
 
       <Container maxWidth="md">
         <div className="header">
           <div className="header__logo">
             <img src={require("../../assets/images/logo.png")} alt="logo" />
           </div>
-          {/* <div className="header__search">
-            <TextField
-              label="Search field"
-              type="search"
-              size="small"
-              variant="outlined"
-            />
-          </div> */}
           <div className="header__controls">
             {user ? (
               <Button onClick={() => setUploadOpen(true)}>
@@ -167,18 +199,23 @@ const Header = () => {
             ) : (
               ""
             )}
-            {/* <HomeOutlinedIcon />
-            <ExploreOutlinedIcon />
-            <FavoriteBorderOutlinedIcon /> */}
-            {/* <Avatar
-              onClick={handleOpen}
-              alt="Ahmer Khan"
-              src="/static/images/avatar/1.jpg"
-            /> */}
             {user ? (
-              <Button type="submit" onClick={() => auth.signOut()}>
-                Logout
-              </Button>
+              <React.Fragment>
+                <Dropdown>
+                  <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    {user?.displayName}
+                  </Dropdown.Toggle>
+
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={handleProfile}>
+                      Profile
+                    </Dropdown.Item>
+                    <Dropdown.Item onClick={() => auth.signOut()}>
+                      Logout
+                    </Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
+              </React.Fragment>
             ) : (
               <div className="header_logincontainer">
                 <Button

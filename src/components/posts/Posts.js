@@ -4,7 +4,6 @@ import Post from "../post/Post";
 import { db } from "../../firebase";
 
 const Posts = (props) => {
-  console.log(props);
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {

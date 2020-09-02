@@ -31,9 +31,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const Post = ({ postId, post, loggedInUser }) => {
-  console.log(loggedInUser);
-  console.log(post);
-
   const { caption, imageUrl, username } = post;
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
@@ -46,7 +43,6 @@ const Post = ({ postId, post, loggedInUser }) => {
         .collection("comments")
         .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
-          console.log(snapshot);
           setComments(
             snapshot.docs.map((doc) => ({
               commentId: doc.id,
@@ -61,7 +57,6 @@ const Post = ({ postId, post, loggedInUser }) => {
   }, [post, postId]);
 
   const submitCommentHandler = (event) => {
-    console.log(comment);
     db.collection("posts").doc(postId).collection("comments").add({
       text: comment,
       username: loggedInUser,
