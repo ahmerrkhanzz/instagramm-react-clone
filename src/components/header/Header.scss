@@ -23,13 +23,31 @@ header {
         color: #262626;
         font-size: 0.9rem;
         border: none;
-        &:focus, &:hover, &:active {
+        &:focus,
+        &:hover,
+        &:active {
           box-shadow: unset;
           background: none;
           border: none;
         }
       }
+      .dropdown-item {
+        font-size: 0.8rem;
+      }
     }
+  }
+}
+.profile {
+  img{
+    max-width: 8rem;
+    object-fit: contain;
+  }
+  .form-control{
+    font-size: 0.8rem;
+  }
+  label{
+    font-size: 0.8rem;
+    text-align: right;
   }
 }
 .auth {

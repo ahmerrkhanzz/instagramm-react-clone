@@ -1,11 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Container, TextField, Avatar, Input, Button } from "@material-ui/core";
+import {
+  Container,
+  InputLabel,
+  TextField,
+  Avatar,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Input,
+  Grid,
+  FormControl,
+  FormHelperText,
+  Button,
+} from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import Modal from "@material-ui/core/Modal";
-import { auth } from "../../firebase";
+import { db, auth } from "../../firebase";
 import ImageUploader from "../image-uploader/ImageUploader";
 import PublishIcon from "@material-ui/icons/Publish";
-import { Dropdown, Form, Col, Row } from "react-bootstrap";
+import { Dropdown, Form, Col, Row, Image } from "react-bootstrap";
 import "./Header.scss";
 
 function getModalStyle() {
@@ -28,8 +42,20 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  form: {
+    display: "flex",
+    flexDirection: "column",
+    margin: "auto",
+    width: "fit-content",
+  },
+  formControl: {
+    marginTop: theme.spacing(2),
+    minWidth: 120,
+  },
+  formControlLabel: {
+    marginTop: theme.spacing(1),
+  },
 }));
-
 const Header = () => {
   const classes = useStyles();
   const [modalStyle] = useState(getModalStyle);
@@ -40,8 +66,18 @@ const Header = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [user, setUser] = useState(null);
+  const [userInfo, setUserInfo] = useState(null);
   const [signIn, setSignIn] = useState(false);
 
+  // FORM FIELDS
+  const [profileName, setProfileName] = useState("");
+  const [profileEmail, setProfileEmail] = useState("");
+  const [image, setImage] = useState("");
+  const [website, setWebsite] = useState("");
+  const [profileUsername, setProfileUsername] = useState("");
+  const [bio, setBio] = useState("");
+
+  // LOGIN USER LISTENER
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((authUser) => {
       console.log(authUser);
@@ -57,6 +93,21 @@ const Header = () => {
     return () => {
       unsubscribe();
     };
+  }, [user]);
+
+  useEffect(() => {
+    if (user) {
+      db.collection("users")
+        .doc(user.uid)
+        .get()
+        .then((snapshot) => {
+          console.log(snapshot.data());
+          setUserInfo(snapshot.data());
+        })
+        .catch((err) => {
+          console.log("Error getting documents", err);
+        });
+    }
   }, [user]);
 
   const handleOpen = () => {
@@ -96,15 +147,14 @@ const Header = () => {
     setOpen(false);
   };
 
+  const handleProfileImageChange = () => {
+    console.log('here')
+  }
+
   return (
     <header>
       {/* AUTHENTICATION MODAL */}
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
+      <Modal open={open} onClose={() => setOpen(false)}>
         <div style={modalStyle} className={classes.paper}>
           <form className="auth" noValidate autoComplete="off">
             <center>
@@ -141,12 +191,7 @@ const Header = () => {
       {/* AUTHENTICATION MODAL */}
 
       {/* IMAGE UPLOADER MODAL */}
-      <Modal
-        open={uploadOpen}
-        onClose={() => setUploadOpen(false)}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-      >
+      <Modal open={uploadOpen} onClose={() => setUploadOpen(false)}>
         <div style={modalStyle} className={classes.paper}>
           <ImageUploader username={user?.displayName} />
         </div>
@@ -154,36 +199,107 @@ const Header = () => {
       {/* IMAGE UPLOADER MODAL */}
 
       {/* USER PROFILE MODAL */}
-      <Modal
+      <Dialog
+        fullWidth={true}
         open={profileOpen}
         onClose={() => setProfileOpen(false)}
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
       >
-        <div style={modalStyle} className={classes.paper}>
-          <form className={classes.root} noValidate autoComplete="off">
-            <Input
-              defaultValue="Hello world"
-              inputProps={{ "aria-label": "description" }}
-            />
-            <Input
-              placeholder="Placeholder"
-              inputProps={{ "aria-label": "description" }}
-            />
-            <Input
-              defaultValue="Disabled"
-              disabled
-              inputProps={{ "aria-label": "description" }}
-            />
-            <Input
-              defaultValue="Error"
-              error
-              inputProps={{ "aria-label": "description" }}
-            />
-          </form>
-          
-        </div>
-      </Modal>
+        <DialogContent dividers={true}>
+          {userInfo ? (
+            <Form className="profile">
+              <Form.Group as={Row}>
+                <Form.Label column sm={3}>
+                  Profile Image
+                </Form.Label>
+                <Col sm={4}>
+                  <Image src={userInfo.image} thumbnail />
+                </Col>
+                <Col sm={5}>
+                  <input className="form-control" onChange={handleProfileImageChange} type="file" />
+                </Col>
+              </Form.Group>
+              <Form.Group as={Row}>
+                <Form.Label column sm={3}>
+                  Name
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="text"
+                    placeholder="Name"
+                    defaultValue={userInfo.name}
+                    onChange={(event) => setProfileName(event.target.value)}
+                  />
+                </Col>
+              </Form.Group>
+
+              <Form.Group as={Row}>
+                <Form.Label column sm={3}>
+                  Username
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="text"
+                    placeholder="Username"
+                    defaultValue={userInfo.username}
+                    onChange={(event) => setProfileUsername(event.target.value)}
+                  />
+                </Col>
+              </Form.Group>
+              <Form.Group as={Row}>
+                <Form.Label column sm={3}>
+                  Website
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="text"
+                    placeholder="Website"
+                    defaultValue={userInfo.website}
+                    onChange={(event) => setWebsite(event.target.value)}
+                  />
+                </Col>
+              </Form.Group>
+              <Form.Group as={Row}>
+                <Form.Label column sm={3}>
+                  Bio
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="text"
+                    placeholder="Bio"
+                    defaultValue={userInfo.bio}
+                    onChange={(event) => setBio(event.target.value)}
+                  />
+                </Col>
+              </Form.Group>
+              <Form.Group as={Row}>
+                <Form.Label column sm={3}>
+                  Email
+                </Form.Label>
+                <Col sm={9}>
+                  <Form.Control
+                    type="email"
+                    placeholder="Email"
+                    defaultValue={userInfo.email}
+                    onChange={(event) => setProfileEmail(event.target.value)}
+                  />
+                </Col>
+              </Form.Group>
+              <Form.Group as={Row}>
+                <Col sm={{ span: 10, offset: 2 }}>
+                  <Button type="submit">Submit</Button>
+                </Col>
+              </Form.Group>
+            </Form>
+          ) : (
+            "Loading..."
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setProfileOpen(false)} color="primary">
+            Close
+          </Button>
+        </DialogActions>
+      </Dialog>
       {/* USER PROFILE MODAL */}
 
       <Container maxWidth="md">
