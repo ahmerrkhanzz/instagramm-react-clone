@@ -11,6 +11,7 @@ import IconButton from "@material-ui/core/IconButton";
 import Typography from "@material-ui/core/Typography";
 import { red } from "@material-ui/core/colors";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
+import firebase from "firebase";
 
 import { db } from "../../firebase";
 import "./Post.scss";
@@ -32,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
 const Post = ({ postId, post, loggedInUser }) => {
   console.log(loggedInUser);
   console.log(post);
+
   const { caption, imageUrl, username } = post;
   const [comments, setComments] = useState([]);
   const [comment, setComment] = useState("");
@@ -42,6 +44,7 @@ const Post = ({ postId, post, loggedInUser }) => {
         .collection("posts")
         .doc(postId)
         .collection("comments")
+        .orderBy("timestamp", "asc")
         .onSnapshot((snapshot) => {
           console.log(snapshot);
           setComments(
@@ -62,12 +65,15 @@ const Post = ({ postId, post, loggedInUser }) => {
     db.collection("posts").doc(postId).collection("comments").add({
       text: comment,
       username: loggedInUser,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
     });
     setComment("");
   };
 
   const classes = useStyles();
-
+  if (!loggedInUser) {
+    return;
+  }
   return (
     <div className="post">
       <Card className={classes.root}>

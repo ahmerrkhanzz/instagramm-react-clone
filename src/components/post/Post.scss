@@ -5,7 +5,7 @@
     color: #262626 !important;
     strong {
       margin-right: 0.1rem;
-      font-weight: 600;
+      font-weight: 700;
     }
   }
   &__caption {
@@ -46,4 +46,7 @@
       }
     }
   }
+}
+.MuiCardContent-root:last-child{
+    padding-bottom: 16px !important;
 }
