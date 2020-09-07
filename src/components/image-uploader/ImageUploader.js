@@ -2,10 +2,9 @@ import React, { useState } from "react";
 import { storage, db } from "../../firebase";
 import firebase from "firebase";
 import { TextField, Button, LinearProgress } from "@material-ui/core";
-import './ImageUploader.scss'
+import "./ImageUploader.scss";
 
 const ImageUploader = ({ username }) => {
-  console.log(username);
   const [caption, setCaption] = useState("");
   const [progress, setProgress] = useState(0);
   const [image, setImage] = useState(null);
@@ -18,7 +17,6 @@ const ImageUploader = ({ username }) => {
     }
   };
   const handleUpload = () => {
-    console.log(image);
     const uploadTask = storage.ref(`images/${image.name}`).put(image);
 
     uploadTask.on(

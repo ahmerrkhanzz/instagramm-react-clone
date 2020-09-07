@@ -39,14 +39,33 @@
         border: none;
         outline: none;
       }
-      &:disabled{
-          cursor: unset;
-          opacity: 0.4;
-          pointer-events: none;
+      &:disabled {
+        cursor: unset;
+        opacity: 0.4;
+        pointer-events: none;
       }
     }
   }
+  .dropdown .dropdown-toggle {
+    background: none;
+    color: #262626;
+    font-size: 0.9rem;
+    border: none;
+    &:focus,
+    &:hover,
+    &:active {
+      box-shadow: unset;
+      background: none;
+      border: none;
+    }
+    &::after{
+      display: none;
+    }
+  }
+  .dropdown-item {
+    font-size: 0.8rem;
+  }
 }
-.MuiCardContent-root:last-child{
-    padding-bottom: 16px !important;
+.MuiCardContent-root:last-child {
+  padding-bottom: 16px !important;
 }

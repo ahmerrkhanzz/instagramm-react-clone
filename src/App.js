@@ -48,7 +48,7 @@ function App() {
               <Posts user={user}/>
             </Grid>
             <Grid item xs={12} sm={5} md={5}>
-              <Sidebar />
+              {/* <Sidebar /> */}
             </Grid>
           </Grid>
         </Container>

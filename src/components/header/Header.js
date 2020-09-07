@@ -1,17 +1,10 @@
 import React, { useState, useEffect } from "react";
 import {
   Container,
-  InputLabel,
-  TextField,
-  Avatar,
   Dialog,
-  DialogTitle,
   DialogContent,
   DialogActions,
   Input,
-  Grid,
-  FormControl,
-  FormHelperText,
   Button,
 } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
@@ -101,7 +94,6 @@ const Header = () => {
         .doc(user.uid)
         .get()
         .then((snapshot) => {
-          console.log(snapshot.data());
           setUserInfo(snapshot.data());
         })
         .catch((err) => {
@@ -115,7 +107,6 @@ const Header = () => {
   };
 
   const handleProfile = () => {
-    console.log("here");
     setProfileOpen(true);
   };
 
@@ -128,7 +119,6 @@ const Header = () => {
           console.log(res);
         })
         .catch((err) => {
-          console.log(err);
           alert(err.message);
         });
     } else {
@@ -140,16 +130,26 @@ const Header = () => {
           });
         })
         .catch((err) => {
-          console.log(err);
           alert(err.message);
         });
     }
     setOpen(false);
   };
 
+  const submitProfileHandler = (event) => {
+    console.log(event);
+    db.collection("users").doc(user.uid).set({
+      name: profileName,
+      username: profileUsername,
+      bio: bio,
+      email: profileEmail,
+      website: website,
+    });
+  };
+
   const handleProfileImageChange = () => {
-    console.log('here')
-  }
+    console.log("here");
+  };
 
   return (
     <header>
@@ -215,7 +215,11 @@ const Header = () => {
                   <Image src={userInfo.image} thumbnail />
                 </Col>
                 <Col sm={5}>
-                  <input className="form-control" onChange={handleProfileImageChange} type="file" />
+                  <input
+                    className="form-control"
+                    onChange={handleProfileImageChange}
+                    type="file"
+                  />
                 </Col>
               </Form.Group>
               <Form.Group as={Row}>
@@ -284,17 +288,15 @@ const Header = () => {
                   />
                 </Col>
               </Form.Group>
-              <Form.Group as={Row}>
-                <Col sm={{ span: 10, offset: 2 }}>
-                  <Button type="submit">Submit</Button>
-                </Col>
-              </Form.Group>
             </Form>
           ) : (
             "Loading..."
           )}
         </DialogContent>
         <DialogActions>
+          <Button type="submit" onClick={submitProfileHandler}>
+            Submit
+          </Button>
           <Button onClick={() => setProfileOpen(false)} color="primary">
             Close
           </Button>
@@ -323,9 +325,9 @@ const Header = () => {
                   </Dropdown.Toggle>
 
                   <Dropdown.Menu>
-                    <Dropdown.Item onClick={handleProfile}>
+                    {/* <Dropdown.Item onClick={handleProfile}>
                       Profile
-                    </Dropdown.Item>
+                    </Dropdown.Item> */}
                     <Dropdown.Item onClick={() => auth.signOut()}>
                       Logout
                     </Dropdown.Item>
